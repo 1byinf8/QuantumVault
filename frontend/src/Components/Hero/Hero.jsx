@@ -3,6 +3,7 @@ import "./Hero.css";
 import inboxMessages from "../Assets/inbox";
 
 export default function Hero() {
+    console.log(inboxMessages)
     const [files, setFiles] = useState(inboxMessages);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [recipient, setRecipient] = useState("");
@@ -11,12 +12,14 @@ export default function Hero() {
         setUploadedFile(event.target.files[0]);
     };
 
-    const file_history = inboxMessages.slice(0, 6).map((inbox, index) => (
+    const file_history = inboxMessages.slice(0, 5).map((inbox, index) => {
+        console.log(inbox)
+        return(
         <div className="spane" key={index}>
             <p style={{color:"white"}}>{inbox.sender}</p>
             <p style={{color:"white"}}>{inbox.timestamp}</p>
         </div>
-    ));
+    )});
 
     return (
         <div className="hero">

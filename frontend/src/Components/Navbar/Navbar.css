@@ -10,8 +10,7 @@
     align-content: center;
     justify-items: center;
     margin: 0;
-    padding: 1rem;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 1); 
+    padding: 1rem; 
 }
 .nav-container h1{
     font-weight: 600;
@@ -21,6 +20,7 @@
 .nav-container p{
     font-weight: 500;
     font-size: 1rem;
+    cursor: pointer;
 }
 .nav-links{
     display:flex ;
