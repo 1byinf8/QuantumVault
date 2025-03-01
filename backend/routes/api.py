@@ -2,18 +2,25 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 import socketio
-from services.file_service import upload_file, download_file, register_user
+from services.file_service import upload_file, download_file, register_user, check_email
 from models.blockchain import main_blockchain
 from dataclasses import asdict
 
 router = APIRouter()
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='http://localhost:3000')
 
-@router.post("/register")
+@router.post("/login")
 async def register_user_endpoint(username: str):
     print(username)
     try:
         return await register_user(username)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+@router.post("/check-email")
+async def check_email_endpoint(email: str):
+    try:    
+        return await check_email(email)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

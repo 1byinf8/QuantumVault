@@ -12,6 +12,11 @@ async def register_user(username: str) -> dict:
     users.append(username)
     return {"username": username, "status": "User registered successfully"}
 
+async def check_email(email: str) -> dict:
+    """Check if an email is already registered."""
+    exists = any(user.email == email for user in users)
+    return {"email": email, "exists": exists}
+
 async def upload_file(file, shared_with: str, owner: str, sio):
     # Validate owner and shared_with users
     if owner not in users:

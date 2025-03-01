@@ -14,7 +14,7 @@ export default function Login(){
   const [serverMessage, setServerMessage] = useState({ type: '', text: '' });
 
   // API URL - replace with your actual backend endpoint
-  const API_URL = 'https://your-backend-api.com/auth';
+  const API_URL = 'https://localhost:8000';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
