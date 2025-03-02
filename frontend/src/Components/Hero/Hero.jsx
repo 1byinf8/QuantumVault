@@ -37,7 +37,7 @@ export default function Hero() {
                 ...prev,
                 {
                     sender: block.owner,
-                    timestamp: new Date(block.timestamp * 1000).toLocaleString(),
+                    timestamp: new Date(block.timestamp * 1000).toLocaleString().slice(0,6),
                 },
             ]);
         });
@@ -92,7 +92,7 @@ export default function Hero() {
                     files.slice(0, 5).map((inbox, index) => (
                         <div className="spane" key={index}>
                             <p style={{ color: "white" }}>{inbox.sender}</p>
-                            <p style={{ color: "white" }}>{inbox.timestamp}</p>
+                            <p style={{ color: "white",fontSize:"0.5rem" }}>{inbox.timestamp}</p>
                         </div>
                     ))
                 ) : (

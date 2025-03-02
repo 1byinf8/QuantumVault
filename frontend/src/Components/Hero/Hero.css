@@ -10,7 +10,7 @@
     box-sizing: border-box;
     background-color: #F5F5F5;
     padding: 2rem;
-    gap: 2rem;
+    gap: 4rem;
 }
 .spane > p{
     color: white;
@@ -61,8 +61,15 @@
     color: white;
     font-size: 1rem;
     cursor: pointer;
+    gap: 2rem;
 }
-
+.upload-section > form{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
 .upload-section input::placeholder {
     color: #bbb;
 }
@@ -72,9 +79,10 @@
     padding: 0.4rem;
     border: 1px solid grey;
     border-radius: 5px;
-    background-color: #333;
+    background-color: red;
     color: white;
     font-size: 1rem;
+    border: none;
     cursor: pointer;
 }
 .submit:hover{
@@ -95,4 +103,9 @@
     font-size: 1rem;
     margin-bottom: 0.5rem;
     cursor: pointer;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.9);
+    role:"button";
+}
+.spane:hover{
+    background-color: #333;
 }
