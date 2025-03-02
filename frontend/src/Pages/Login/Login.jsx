@@ -76,7 +76,6 @@ export default function Login(){
       try {
         // Prepare data for API request
         const dataToSend = {
-          userName:formData.name,
           email: formData.email,
           password: formData.password
         };

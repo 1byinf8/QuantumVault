@@ -1,16 +1,28 @@
 # /Users/1byinf8/Documents/quant-api/services/file_service.py
 import os
 import uuid
-from models.blockchain import Block, main_blockchain, users
+from models.blockchain import Block, User, main_blockchain, users
 from utils.quantum import simulate_bb84
 from utils.encryption import encrypt_file, decrypt_file
 from dataclasses import asdict
 
-async def register_user(username: str) -> dict:
+async def register_user(username: str, email: str, password: str) -> dict:
+    """Register a user with username, email, and password."""
     if any(user.username == username for user in users):
         raise ValueError(f"Username '{username}' already exists")
-    users.append(username)
-    return {"username": username, "status": "User registered successfully"}
+    if any(user.email == email for user in users):
+        raise ValueError(f"Email '{email}' is already registered")
+    
+    new_user = User(username=username, email=email, password=password)
+    users.append(new_user)
+    return {"username": username, "email": email, "status": "User registered successfully"}
+
+async def login_user(email: str, password: str) -> dict:
+    """Login a user with email and password."""
+    user = next((u for u in users if u.email == email and u.password == password), None)
+    if not user:
+        raise ValueError("Invalid email or password")
+    return {"username": user.username, "email": email, "status": "Login successful"}
 
 async def check_email(email: str) -> dict:
     """Check if an email is already registered."""

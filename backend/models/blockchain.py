@@ -22,6 +22,7 @@ class BlockData:
 class User:
     username: str
     email: str
+    password: str
 
 class Block:
     def __init__(self, file_hash, key, file_name, file_size, owner, file_id, shared_with, prev_hash):
