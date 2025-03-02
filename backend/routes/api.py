@@ -3,13 +3,16 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import socketio
-from services.file_service import upload_file, download_file, register_user, check_email, login_user
+from services.file_service import upload_file, download_file, register_user,check_email, login_user
 from models.blockchain import main_blockchain
 from dataclasses import asdict
 
 router = APIRouter()
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='http://localhost:3000')
 
+@router.post("/register")
+async def register_user_endpoint(username: str):
+    print(username)
 class SignupRequest(BaseModel):
     username: str  # Changed from FE's 'name' to match BE
     email: str
@@ -27,19 +30,15 @@ async def register_user_endpoint(request: SignupRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-@router.post("/login")
-async def login_user_endpoint(request: LoginRequest):
-    try:
-        return await login_user(request.email, request.password)
-    except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e))
-    
 @router.post("/check-email")
-async def check_email_endpoint(request: LoginRequest):
+async def check_email_endpoint(email: str):
     try:    
-        return await check_email(request.email)
+        return await check_email(email)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+
 
 @router.post("/upload")
 async def upload_file_endpoint(file: UploadFile = File(...), shared_with: str = "bob", owner: str = "alice"):
