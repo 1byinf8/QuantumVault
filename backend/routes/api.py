@@ -2,7 +2,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 import socketio
-from services.file_service import upload_file, download_file, register_user
+from services.file_service import upload_file, download_file, register_user,check_email
 from models.blockchain import main_blockchain
 from dataclasses import asdict
 
@@ -16,6 +16,17 @@ async def register_user_endpoint(username: str):
         return await register_user(username)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+@router.post("/register")
+async def check_email_endpoint(email: str):
+    print(email)
+    try:
+        return await check_email(email)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+
 
 @router.post("/upload")
 async def upload_file_endpoint(file: UploadFile = File(...), shared_with: str = "bob", owner: str = "alice"):
