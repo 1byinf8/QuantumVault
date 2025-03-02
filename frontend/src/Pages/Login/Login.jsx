@@ -1,8 +1,9 @@
-// /Users/1byinf8/Documents/QRYPTOVAULT/frontend/src/Login.js
 import React, { useState } from 'react';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
@@ -61,8 +62,23 @@ export default function Login() {
       setServerMessage({ type: '', text: '' });
 
       try {
-        const dataToSend = { email: formData.email, password: formData.password };
-        if (!isLogin) dataToSend.username = formData.username;
+        // Prepare data based on login or signup
+        let dataToSend;
+        if (isLogin) {
+          dataToSend = { 
+            email: formData.email, 
+            password: formData.password 
+          };
+        } else {
+          dataToSend = { 
+            username: formData.username,
+            email: formData.email, 
+            password: formData.password 
+          };
+        }
+
+        console.log('Sending request to:', `${API_URL}/${isLogin ? 'login' : 'signup'}`);
+        console.log('Request data:', dataToSend);
 
         const response = await fetch(`${API_URL}/${isLogin ? 'login' : 'signup'}`, {
           method: 'POST',
@@ -70,30 +86,62 @@ export default function Login() {
           body: JSON.stringify(dataToSend)
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.detail || 'Request failed');
+        // For debugging - log the raw response
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        let data;
+        try {
+          // Try to parse the response as JSON
+          data = JSON.parse(responseText);
+        } catch (error) {
+          console.error('Failed to parse response as JSON:', error);
+          throw new Error('Server returned an invalid response');
         }
 
-        // Handle success
-        setServerMessage({
-          type: 'success',
-          text: data.status || (isLogin ? 'Login successful!' : 'Signup successful! Please login.')
-        });
+        if (!response.ok) {
+          throw new Error(data.detail || data.error || 'Request failed');
+        }
 
-        if (isLogin) {
-          if (data.username) {  // Changed from token to username
-            localStorage.setItem('loggedInUser', data.username);
-            window.location.href = '/';  // Redirect to dashboard
-          } else {
-            throw new Error('Login successful but username missing.');
-          }
-        } else {
+        console.log('Success response:', data);
+
+        // Handle successful signup
+        if (!isLogin) {
+          setServerMessage({
+            type: 'success',
+            text: data.status || 'Signup successful! Please login.'
+          });
+          
           setTimeout(() => {
             setIsLogin(true);
-            setFormData({ email: '', password: '', confirmPassword: '', username: '' });
-          }, 1000);
+            setFormData({
+              ...formData,
+              email: formData.email, // Keep the email for login
+              password: '',
+              confirmPassword: '',
+              username: ''
+            });
+          }, 1500);
+          return;
+        }
+        
+        // Handle successful login
+        setServerMessage({
+          type: 'success',
+          text: 'Login successful!'
+        });
+
+        // Based on your curl results, we expect the login response to include username
+        if (data.username) {
+          localStorage.setItem('loggedInUser', data.username);
+          
+          navigate('/home');
+        } else {
+          console.warn('Login successful but username not found in response:', data);
+          // Try to extract username from email as fallback
+          const usernameFromEmail = formData.email.split('@')[0];
+          localStorage.setItem('loggedInUser', usernameFromEmail);
+          window.location.href = '/';
         }
       } catch (error) {
         console.error('Fetch error:', error.message, error.stack);
@@ -117,10 +165,14 @@ export default function Login() {
     <div className="auth-container">
       <div className="auth-card">
         <h2 className="auth-title">
-          {isLogin ? `Welcome back, ${formData.username || 'User'}! Login to Your Account` : 'Create an Account'}
+          {isLogin ? 'Welcome Back!' : 'Create an Account'}
         </h2>
 
-        {serverMessage.text && <div className={`server-message ${serverMessage.type}`}>{serverMessage.text}</div>}
+        {serverMessage.text && (
+          <div className={`server-message ${serverMessage.type}`}>
+            {serverMessage.text}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {!isLogin && (

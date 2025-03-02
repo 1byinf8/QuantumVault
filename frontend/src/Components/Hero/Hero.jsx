@@ -8,7 +8,7 @@ import inboxMessages from "../Assets/inbox"; // Mock data
 const API_URL = "http://localhost:8000";
 const socket = io(API_URL);
 
-export default function Hero({ loggedInUser }) {
+export default function Hero() {
     const [files, setFiles] = useState(inboxMessages); // Initial mock data
     const [uploadedFile, setUploadedFile] = useState(null);
     const [recipient, setRecipient] = useState("");
@@ -61,7 +61,7 @@ export default function Hero({ loggedInUser }) {
     const submitFileUpload = async (e) => {
         e.preventDefault();
 
-        if (!uploadedFile || !loggedInUser || !recipient) {
+        if (!uploadedFile ||!recipient) {
             setServerMessage({ type: "error", text: "Please select a file, log in, and specify a recipient" });
             return;
         }
@@ -70,7 +70,6 @@ export default function Hero({ loggedInUser }) {
         const formData = new FormData();
         formData.append("file", uploadedFile);
         formData.append("shared_with", recipient);
-        formData.append("owner", loggedInUser);
 
         try {
             const response = await axios.post(`${API_URL}/upload`, formData);
@@ -103,16 +102,16 @@ export default function Hero({ loggedInUser }) {
             <div className="upload-section">
                 <h2>Upload File</h2>
                 <form onSubmit={submitFileUpload}>
-                    <input type="file" onChange={handleFileUpload} disabled={!loggedInUser || isLoading} />
+                    <input type="file" onChange={handleFileUpload} disabled={isLoading} />
                     <h2>Recipient Name</h2>
                     <input
                         type="text"
                         placeholder="Enter recipient name"
                         value={recipient}
                         onChange={(e) => setRecipient(e.target.value)}
-                        disabled={!loggedInUser || isLoading}
+                        disabled={isLoading}
                     />
-                    <button className="submit" type="submit" disabled={!loggedInUser || isLoading}>
+                    <button className="submit" type="submit" disabled={isLoading}>
                         {isLoading ? "Sending..." : "Send"}
                     </button>
                 </form>
@@ -121,7 +120,6 @@ export default function Hero({ loggedInUser }) {
                         {serverMessage.text}
                     </p>
                 )}
-                {!loggedInUser && <p style={{ color: "red" }}>Please log in to upload files</p>}
             </div>
         </div>
     );

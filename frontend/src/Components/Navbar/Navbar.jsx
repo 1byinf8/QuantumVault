@@ -1,10 +1,12 @@
 import "./Navbar.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
     const handleLogout = () => {
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      navigate("/");
   };
   return (
     <div className="nav-container">

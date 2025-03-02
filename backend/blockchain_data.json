@@ -1,0 +1,15 @@
+{
+  "blockchain": [],
+  "users": [
+    {
+      "username": "alice",
+      "email": "alice@example.com",
+      "password": "pass123"
+    },
+    {
+      "username": "bob",
+      "email": "bob@example.com",
+      "password": "pass456"
+    }
+  ]
+}

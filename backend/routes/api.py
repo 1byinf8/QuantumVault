@@ -37,7 +37,12 @@ async def check_email_endpoint(email: str):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
+@router.post("/login")
+async def login_user_endpoint(request: LoginRequest):
+    try:
+        return await login_user(request.email, request.password)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/upload")
