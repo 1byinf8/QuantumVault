@@ -1,7 +1,9 @@
-# /Users/1byinf8/Documents/quant-api/models/blockchain.py
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 import hashlib
 import time
+import json
+import atexit
+import os
 from typing import List
 
 @dataclass
@@ -80,3 +82,62 @@ class Block:
 # Global in-memory storage
 main_blockchain: List[Block] = []
 users: List[User] = []  # Store registered users
+
+# File path for persistent storage
+DATA_FILE = "blockchain_data.json"
+
+def save_blockchain_to_json():
+    """
+    Saves the blockchain and user data to a JSON file.
+    This function will be called automatically when the application exits.
+    """
+    global main_blockchain, users
+    
+    # Create the data structure to save
+    data = {
+        "blockchain": [block.to_data().__dict__ for block in main_blockchain],
+        "users": [asdict(user) for user in users]
+    }
+    
+    # Write to JSON file
+    with open(DATA_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+    print(f"Blockchain data saved to {DATA_FILE}")
+
+def initialize_blockchain():
+    load_blockchain_from_json()
+
+def load_blockchain_from_json():
+
+    global main_blockchain, users
+    
+    if not os.path.exists(DATA_FILE):
+        print(f"No existing blockchain data found at {DATA_FILE}")
+        return
+    
+    try:
+        with open(DATA_FILE, 'r') as f:
+            data = json.load(f)
+        
+        # Restore blockchain
+        main_blockchain = []
+        for block_data in data.get("blockchain", []):
+            # Convert dictionary back to BlockData
+            block_data_obj = BlockData(**block_data)
+            # Create Block from BlockData
+            block = Block.from_data(block_data_obj)
+            main_blockchain.append(block)
+        
+        # Restore users
+        users = []
+        for user_data in data.get("users", []):
+            user = User(**user_data)
+            users.append(user)
+        
+        print(f"Loaded {len(main_blockchain)} blocks and {len(users)} users from {DATA_FILE}")
+    except Exception as e:
+        print(f"Error loading blockchain data: {e}")
+
+# Register the save function to run when the program exits
+atexit.register(save_blockchain_to_json)
+
