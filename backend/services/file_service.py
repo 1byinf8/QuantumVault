@@ -30,12 +30,11 @@ async def check_email(email: str) -> dict:
     return {"email": email, "exists": exists}
 
 async def upload_file(file, shared_with: str, owner: str, sio):
-    # Validate owner and shared_with users
-    if owner not in users:
+    if not any(user.username == owner for user in users):
         raise ValueError(f"Owner '{owner}' is not a registered user")
     shared_with_list = shared_with.split(",")
     for user in shared_with_list:
-        if user not in users:
+        if not any(u.username == user for u in users):
             raise ValueError(f"User '{user}' in shared_with is not registered")
 
     file_id = str(uuid.uuid4())
