@@ -47,6 +47,7 @@ async def login_user_endpoint(request: LoginRequest):
 
 @router.post("/upload")
 async def upload_file_endpoint(file: UploadFile = File(...), shared_with: str = "bob", owner: str = "alice"):
+    print(file)
     try:
         return await upload_file(file, shared_with, owner, sio)
     except ValueError as e:
